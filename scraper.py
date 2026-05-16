@@ -50,7 +50,7 @@ SOURCES = [
     {
         "name": "NASDAQ 100",
         "url": "https://en.wikipedia.org/wiki/Nasdaq-100",
-        "table": 4,
+        "table": 5,
         "sym": "Ticker",
         "sec": "Company",
         "gics_sector": None,

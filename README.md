@@ -124,4 +124,25 @@ SELECT ticker, company_name FROM stocks WHERE sector = 'Information Technology';
 - `pandas`
 - `requests`
 
-All available in the standard data science environment. No additional installs required.
+### Setup (WSL2 / Ubuntu)
+
+On Ubuntu 24.04+, pip installs are blocked system-wide (PEP 668). Create a virtual
+environment outside OneDrive so the installed packages aren't subject to cloud sync:
+
+```bash
+python3 -m venv ~/.venv-market
+~/.venv-market/bin/pip install pandas yfinance requests
+```
+
+Then run scripts with:
+
+```bash
+~/.venv-market/bin/python pipeline.py --tickers AAPL MSFT NVDA AMZN
+```
+
+Or activate the environment for the session:
+
+```bash
+source ~/.venv-market/bin/activate
+python pipeline.py --tickers AAPL MSFT NVDA AMZN
+```

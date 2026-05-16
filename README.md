@@ -123,6 +123,7 @@ SELECT ticker, company_name FROM stocks WHERE sector = 'Information Technology';
 - `yfinance`
 - `pandas`
 - `requests`
+- `lxml`
 
 ### Setup (WSL2 / Ubuntu)
 
@@ -131,7 +132,7 @@ environment outside OneDrive so the installed packages aren't subject to cloud s
 
 ```bash
 python3 -m venv ~/.venv-market
-~/.venv-market/bin/pip install pandas yfinance requests
+~/.venv-market/bin/pip install pandas yfinance requests lxml
 ```
 
 Then run scripts with:

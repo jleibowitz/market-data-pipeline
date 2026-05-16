@@ -17,6 +17,7 @@ Usage:
 """
 
 import argparse
+import os
 import sys
 import time
 
@@ -30,9 +31,9 @@ def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Stock price ingestion pipeline")
     p.add_argument(
         "--db",
-        default="market_data.db",
+        default="~/market_data.db",
         metavar="PATH",
-        help="SQLite database file (default: market_data.db)",
+        help="SQLite database file (default: ~/market_data.db)",
     )
     p.add_argument(
         "--tickers",
@@ -55,6 +56,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    args.db = os.path.expanduser(args.db)
     t0 = time.time()
 
     # ── 1. Connect and create schema ─────────────────────────────────────────

@@ -5,6 +5,23 @@ SQLite database and ingestion pipeline for historical stock price data from Yaho
 Covers the S&P 500, S&P 400, S&P 600, and NASDAQ 100 (~1,500 tickers). Supports full
 history downloads and incremental daily updates.
 
+## Database location
+
+The default database path is `~/market_data.db` (your home directory). **Do not store the
+database inside a cloud-synced folder such as OneDrive or Dropbox.**
+
+Two reasons this matters for this codebase specifically:
+
+- **WAL mode** — SQLite's WAL journal creates two extra files (`market_data.db-wal`,
+  `market_data.db-shm`). Cloud sync tools that touch these mid-write can corrupt the
+  database or produce sync conflicts.
+- **Size and write frequency** — a full run (~1,500 tickers) writes millions of rows.
+  Syncing a multi-GB file on every pipeline run wastes bandwidth and slows ingestion.
+
+The source files (`.py`) are fine in OneDrive; only the generated database needs to live
+outside it. On WSL2 the default path resolves to `/home/<user>/market_data.db`, which is
+inside the WSL virtual disk and never synced.
+
 ## Schema
 
 Three tables:
@@ -29,32 +46,32 @@ Three tables:
 ### Full run (scrape Wikipedia + download all ~1,500 tickers)
 
 ```bash
-python pipeline.py --db market_data.db
+python pipeline.py           # uses ~/market_data.db by default
 ```
 
 ### Quick test with specific tickers
 
 ```bash
-python pipeline.py --db test.db --tickers AAPL MSFT NVDA AMZN
+python pipeline.py --tickers AAPL MSFT NVDA AMZN
 ```
 
 ### Incremental update (fetch only new data since last run)
 
 ```bash
-python pipeline.py --db market_data.db --no-scrape
+python pipeline.py --no-scrape
 ```
 
 ### Re-download everything from scratch
 
 ```bash
-python pipeline.py --db market_data.db --full-refresh
+python pipeline.py --full-refresh
 ```
 
 ### Pipeline flags
 
 | Flag | Description |
 |---|---|
-| `--db PATH` | SQLite file path (default: `market_data.db`) |
+| `--db PATH` | SQLite file path (default: `~/market_data.db`) |
 | `--tickers T [T ...]` | Download only these tickers |
 | `--no-scrape` | Skip Wikipedia scrape; use tickers already in the `stocks` table |
 | `--full-refresh` | Ignore stored last dates; redownload complete history |
@@ -84,7 +101,7 @@ All `query.py` commands accept `--db PATH` to point at a non-default database fi
 ## Direct SQL
 
 ```bash
-sqlite3 market_data.db
+sqlite3 ~/market_data.db
 
 -- Summary
 SELECT COUNT(DISTINCT ticker) AS tickers, COUNT(*) AS rows,

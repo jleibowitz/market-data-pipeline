@@ -12,6 +12,7 @@ Usage examples:
 """
 
 import argparse
+import os
 import sys
 
 import db
@@ -19,8 +20,8 @@ import db
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Inspect the stock price database")
-    p.add_argument("--db", default="market_data.db", metavar="PATH",
-                   help="SQLite database file (default: market_data.db)")
+    p.add_argument("--db", default="~/market_data.db", metavar="PATH",
+                   help="SQLite database file (default: ~/market_data.db)")
     p.add_argument("--summary", action="store_true",
                    help="Print row counts and date range")
     p.add_argument("--ticker", metavar="TICKER",
@@ -192,6 +193,7 @@ def cmd_log(conn, ticker: str) -> None:
 
 def main() -> None:
     args = parse_args()
+    args.db = os.path.expanduser(args.db)
 
     try:
         conn = db.get_connection(args.db)
